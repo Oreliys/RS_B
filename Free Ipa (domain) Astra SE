@@ -1,0 +1,35 @@
+Подготовка Сервера
+
+cat /etc/resolv.conf
+В файле /etc/hostname должно содержаться полное доменное имя  (FQDN) сервера, например astraipa.astradomain.ad
+______________________________________________
+Установка Консоль
+sudo apt install astra-freeipa-server
+
+/etc/apache2/apache2.conf 
+
+AstraMode off
+Иначе Apache не заведетсья на Астре
+______________________________________________
+первичная иницилизация
+sudo main-DC-server -n astraipa -d reaskills.cyber
+
+main-DC - Имя сервера, reaskills.cyber желаемый домен
+_______________________________________
+Инициализация с использованием центра сертификации DogTag
+sudo astra-freeipa-server -o --dogtag
+
+________________________________
+Удаление и переустановка сервера FreeIPA
+sudo astra-freeipa-server -U
+
+________________________
+ВВод в домен:
+1)sudo apt install astra-freeipa-client
+2)sudo astra-freeipa-client -d reaskills.cyber
+
+Вывод из домена (1 На DC 2,3 UserPC)
+1)Удалить клиентскую машину из списка  хостов домена. Для этого можно использовать web-интерфейс FreeIPA или командную строку:
+ipa host-del <имя_машины> --updatedns
+2)sudo astra-freeipa-client -U
+3)sudo apt purge astra-freeipa-client sssd krb5-user  --autoremove
