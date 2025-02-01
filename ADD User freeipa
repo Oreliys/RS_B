@@ -1,0 +1,28 @@
+Запускаем скрипт когда есть авторизация kerebos
+kinit admin
+
+Заводим группы в FreeIpa:
+Administrators, Workers,TopManagers
+
+Создаем исполняемый *sh скрипт,
+Задаем ему права на выполнение
+sudo chmod +x file.sh
+
+______________________________
+#!/bin/bash
+
+for ((i=1;i<131;i++))
+do
+if [[ $i -lt 41 ]]; then
+printf "P@ssw0rdAdmin\nP@ssw0rdAdmin\n"| ipa user-add User$i --password --first=User$i --last=User$i
+ipa group-add-member Administrators --users=user$i
+ elif [[ $i -lt 81 ]]; then
+printf "P@ssw0rdWorker\nAP@ssw0rdWorker\n"| ipa user-add User$i --password --first=User$i --last=User$i
+ipa group-add-member Workers --users=user$i
+ elif [[ $i -lt 100 ]]; then
+
+ elif [[ $i -gt 100 && $i -lt 131 ]]; then
+printf "P@ssw0rdTop\nAP@ssw0rdTop\n"| ipa user-add SuperUser$i --password --first=SuperUser$i --last=SuperUser$i
+ipa group-add-member To --users=SuperUser$i
+ fi
+done
