@@ -5,19 +5,22 @@ apt install strongswan
 
 ###################################################################################
 
-cat /etc/gre.up (router2)
+cat /etc/gre.up (router1)
 #!/bin/bash
-ip tunnel add tun1 mode gre local 10.10.10.10 remote 10.20.20.10 ttl 64
+ip tunnel add tun1 mode gre local 10.20.20.10 remote 10.10.10.10 ttl 64
 ip link set tun1 up
 ip addr add 10.5.5.1/30 dev tun1
 
 ###################################################################################
 
-cat /etc/gre.up (router1)
+cat /etc/gre.up (router2)
 #!/bin/bash
-ip tunnel add tun1 mode gre local 10.20.20.10 remote 10.10.10.10 ttl 64
+ip tunnel add tun1 mode gre local 10.10.10.10 remote 10.20.20.10 ttl 64
 ip link set tun1 up
 ip addr add 10.5.5.2/30 dev tun1
+ip tunnel add tun2 mode gre local 10.10.10.10 remote 10.30.30.10 ttl 64
+ip link set tun2 up
+ip addr add 10.5.50.1/30 dev tun2
 
 ###################################################################################
 echo  '@reboot root /etc/gre.up' >> /etc/crontab
@@ -67,7 +70,7 @@ conn vpn
         ike=aes128-sha256-modp3072
         esp=aes128-sha256
 
-#conn vpn1 (Для второго VPN)
+#conn vpn2 (Для второго VPN)
 #        auto=start
 #        type=tunnel
 #        authby=secret
@@ -86,10 +89,38 @@ cat /etc/ipsec.secrets
 
 
 
-Client Mashine
+Client Mashine (REMOTE-PC)
 
+cat /etc/gre.up (PC)
+#!/bin/bash
+ip tunnel add tun1 mode gre local 10.30.30.10 remote 10.10.10.10 ttl 64
+ip link set tun1 up
+ip addr add 10.5.50.2/30 dev tun1
 
+conn vpn2
+       auto=start
+        type=tunnel
+        authby=secret
+        left=10.30.30.10
+        right=10.10.10.10
+        leftsubnet=152.32.66.0/24,10.10.10.0/24,10.10.20.0/24
+        rightsubnet=152.32.65.0/24
+        leftprotoport=gre
+        rightprotoport=gre
+        ike=aes128-sha256-modp3072
+        esp=aes128-sha256
 
+Создаем ярлык на рабочем столе
+[Desktop Entry]
+Name=VPN
+Type=Application
+NoDisplay=false
+Exec=sudo /etc/gre.up
+Hidden=false
+Terminal=false
+StartupNotify=false
+
+Навешиваем права на запуск
 
 cat /etc/ipsec.secrets 
 10.10.10.10 10.30.30.10 : PSK "C1Sc0_Net"
