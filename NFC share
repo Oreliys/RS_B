@@ -1,0 +1,28 @@
+1)На сервере устанавливаем компонент для серверной части NFS:
+apt update
+apt install nfs-kernel-server
+apt install nfs-common
+
+Правим файл конфигурации (Добавляем строку)
+nano /etc/exports
+
+/data/nfs       192.168.2.0/24(rw,no_root_squash,no_subtree_check)
+
+2)Создадим каталог на сервере для нашей шары:
+
+mkdir -p /data/nfs
+
+Выполним экспорт данных (перечитаем наш конфигурационный файл /etc/exports, чтобы сервер начал отдавать настроенные шары):
+exportfs -a
+
+3) Проверяем работу службы
+systemctl status nfs-server
+
+4) Подключения на клиенте
+
+apt install nfs-common
+
+mount -t nfs 192.168.2.10:/data/nfs /mnt/nfs
+
+nano /etc/fstab
+192.168.2.10:/data/nfs        /mnt/nfs    nfs4     defaults    0 0
