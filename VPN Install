@@ -33,14 +33,14 @@ cat /etc/ipsec.conf (router1)
 config setup
         # strictcrlpolicy=yes
         # uniqueids = no
-conn vpn
+conn vpn1
         auto=start
         type=tunnel
         authby=secret
         left=10.10.10.10
         right=10.20.20.10
-        leftsubnet=100.200.100.0/24,192.168.1.0/24,192.168.2.0/24,192.168.3.0/24
-        rightsubnet=152.32.66.0/24,10.10.10.0/24,10.10.20.0/24
+        leftsubnet=192.168.1.0/24,192.168.2.0/24,192.168.3.0/24
+        rightsubnet=10.10.10.0/24,10.10.20.0/24
         leftprotoport=gre
         rightprotoport=gre
         ike=aes128-sha256-modp3072
@@ -57,31 +57,31 @@ cat /etc/ipsec.conf (on central router, which connects to another routers) (COD-
 config setup
         # strictcrlpolicy=yes
         # uniqueids = no
-conn vpn
+conn vpn1
         auto=start
         type=tunnel
         authby=secret
         left=10.10.10.10
         right=10.20.20.10
-        leftsubnet=152.32.66.0/24,10.10.10.0/24,10.10.20.0/24
-        rightsubnet=100.200.100.0/24,192.168.1.0/24,192.168.2.0/24,192.168.3.0/24
+        leftsubnet=10.10.10.0/24,10.10.20.0/24
+        rightsubnet=192.168.1.0/24,192.168.2.0/24,192.168.3.0/24
         leftprotoport=gre
         rightprotoport=gre
         ike=aes128-sha256-modp3072
         esp=aes128-sha256
 
-#conn vpn2 (Для второго VPN)
-#        auto=start
-#        type=tunnel
-#        authby=secret
-#        left=10.10.10.10
-#        right=10.30.30.10
-#        leftsubnet=152.32.66.0/24,10.10.10.0/24,10.10.20.0/24
-#        rightsubnet=152.32.65.0/24
-#        leftprotoport=gre
-#        rightprotoport=gre
-#        ike=aes128-sha256-modp3072
-#        esp=aes128-sha256
+conn vpn2 (Для второго VPN)
+        auto=start
+        type=tunnel
+        authby=secret
+        left=10.10.10.10
+        right=10.30.30.10
+        leftsubnet=152.32.66.0/24,10.10.10.0/24,10.10.20.0/24
+        rightsubnet=152.32.65.0/24
+        leftprotoport=gre
+        rightprotoport=gre
+        ike=aes128-sha256-modp3072
+        esp=aes128-sha256
 
 cat /etc/ipsec.secrets 
 10.10.10.10 10.20.20.10 : PSK "C1Sc0_Net"
@@ -93,9 +93,9 @@ Client Mashine (REMOTE-PC)
 
 cat /etc/gre.up (PC)
 #!/bin/bash
-ip tunnel add tun1 mode gre local 10.30.30.10 remote 10.10.10.10 ttl 64
-ip link set tun1 up
-ip addr add 10.5.50.2/30 dev tun1
+ip tunnel add tun2 mode gre local 10.30.30.10 remote 10.10.10.10 ttl 64
+ip link set tun2 up
+ip addr add 10.5.50.2/30 dev tun2
 
 conn vpn2
        auto=start
