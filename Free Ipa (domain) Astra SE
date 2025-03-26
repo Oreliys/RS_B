@@ -33,3 +33,7 @@ ________________________
 ipa host-del <имя_машины> --updatedns
 2)sudo astra-freeipa-client -U
 3)sudo apt purge astra-freeipa-client sssd krb5-user  --autoremove
+
+## ON CLIENT PC !SYNC TIME!
+apt install astra-freeipa-client -y
+astra-freeipa-client -d company.cool -y
